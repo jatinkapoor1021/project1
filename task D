@@ -244,111 +244,116 @@ bool removeWord(string word) {
     }
 
 // TASK D
-// global constants
-const int g_word_count = 26;
-const string g_words[g_word_count] = {"awkward", "bagpipes", "banjo", "bungler", "croquet", "crypt", "dwarves", "fervid", "fishhook", "fjord", "gazebo", "gypsy", "haiku", "haphazard", "hyphen", "ivory", "jazzy", "jiffy", "jinx", "jukebox", "kayak", "kiosk", "klutz", "memento", "mystify", "numbskull", "ostracize", "oxygen", "pajama", "phlegm", "pixel", "polka", "quad", "quip", "rhythmic", "rogue", "sphinx", "squawk", "swivel", "toady", "twelfth", "unzip", "waxy", "wildebeest", "yacht", "zealous", "zigzag", "zippy", "zombie"};
+
+
+// Global variables
+const int g_word_count = 5;
+string g_words[] = {"apple", "orange", "banana", "pear", "grape"};
 
 /*
- * @param: The string with a word from the dictionary
- * @return: string of "" based on the number of characters in the given word
- * @post: Return string of "" based on the length of the given word.
- *        For example, if the word is "game", then the function would return "___".
- *        In other words, a string of four ""s.
- */
+@param            :   The string with a word from the dictionary 
+@return           :   string of "_" based on the number of
+                      characters in the given `word` 
+@post             :   Return string of "_" based on the length
+                      of the given `word`.
+                      For example, if the word is "game", then
+                      the function would return "____". In other
+                      words, a string of four "_"s.
+*/
 string maskWord(string word) {
     string masked_word = "";
-    for (int i = 0; i < word.length(); i++) {
+    for(int i = 0; i < word.length(); i++) {
         masked_word += "_";
     }
     return masked_word;
 }
 
 /*
- * @return: A random word from the global array of words.
- * @post: Return a random word from the global array of words.
- */
-string getRandomWord() {
-    srand(time(NULL));
-    int random_index = rand() % g_word_count;
-    return g_words[random_index];
-}
-
-/*
- * @param: The word to be guessed
- * @param: The letter guessed by the player
- * @param: The current state of the word being guessed
- * @return: bool that indicates whether the letter guessed was found in the word
- * @post: If the guessed letter is found in the word, reveal the letter in the current
- *        state of the word being guessed.
- */
-bool revealLetter(string word, char letter, string& current) {
-    bool found_letter = false;
-    for (int i = 0; i < word.length(); i++) {
-        if (word[i] == letter) {
-            current[i] = letter;
-            found_letter = true;
-        }
-    }
-    return found_letter;
-}
-
-/*
- * @param: The difficulty level chosen by the player
- * @return: The number of tries allowed for the chosen difficulty level
- * @post: Return the number of tries allowed for the chosen difficulty level.
- */
+@param            :   The integer for the difficulty of the game
+                      (0 for easy, 1 for normal, and 2 for hard) 
+@return           :   The number of tries given the `difficulty`
+                      (9 for easy, 7 for normal, and 5 for hard)
+@post             :   Return the number of tries based on given
+                      difficulty (0-easy: 9 tries, 1-normal: 7
+                      tries, 2-Hard: 5 tries) 
+*/
 int getTries(int difficulty) {
-    switch (difficulty) {
+    switch(difficulty) {
         case 0:
-            return 8;
+            return 9;
         case 1:
-            return 6;
+            return 7;
         case 2:
-            return 4;
+            return 5;
         default:
             return 0;
     }
 }
 
 /*
- * @param: The number of remaining tries
- * @param: The difficulty level chosen by the player
- * @post: Print the number of remaining tries, with different messages based on the difficulty level
- */
+@param tries      :   The integer for remaining tries 
+@param difficulty :   The integer for the difficulty of the game 
+                      (0 for easy, 1 for normal, and 2 for hard) 
+@post             :   prints the number of lives left and number
+                      of lives used using "O" and "X". DO NOT
+                      PRINT AN ENDLINE
+
+For example : calling `printAttempts(2, 1)` would print "OOXXXXX". 
+              Based on given `difficulty`, we know the total tries
+              is 7 (from `getTries(1)`). Also, the player has 2
+              `tries` remaining based on the given parameter.
+              Therefore, the function prints two "O"s to indicate
+              the remaining tries and 5 "X"s to indicate the tries
+              that have been used (7-2=5)          
+*/
 void printAttempts(int tries, int difficulty) {
-    switch (difficulty) {
-        case 0:
-            cout << tries << "/8";
-            break;
-        case 1:
-            cout << tries << "/6";
-            break;
-        case 2:
-            cout << tries << "/4";
-            break;
+    int total_tries = getTries(difficulty);
+    for(int i = 0; i < tries; i++) {
+        cout << "O";
+    }
+    for(int i = 0; i < total_tries - tries; i++) {
+        cout << "X";
     }
 }
 
 /*
- * @param: The word to look up the part of speech for
- * @return: The part of speech of the given word
- * @post: Look up and return the part of speech of the given word.
- */
-string getPOS(string word) {
-    // not implemented, return placeholder value
-    return "unknown";
+    @param word       :   The string word from the dictionary
+    @param letter     :   The char letter that that will be revealed
+    @param(&) current :   The string representing a masked word
+    @return           :   `true` if the `letter` exists in `word`,
+                          otherwise return `false`  
+    @post             :   If the given `letter` exists in `word`
+                          reveal the `letter` in `current` masked word
+                          and return `true`. Otherwise, return `false`
+
+    For example : Let's say we have the following main function:
+                  int main(){
+                      string w = "g___";
+                      cout << revealLetter("good", 'o', "g___") << endl;
+                      cout <<  w << endl;
+                  }
+                  The first `cout` will print 1 because the letter 'o'
+                  exists in "good". Thus, the function returned `true`.
+                  The second `cout` will print "goo_". The variable `w`
+                  has been modified by the function to reveal all the
+                  `o`s in "good" resulting in "goo_"           
+*/
+bool revealLetter(string word, char letter, string &current) {
+    bool foundLetter = false;
+    for (int i = 0; i < word.length(); i++) {
+        if (word[i] == letter) {
+            current[i] = letter;
+            foundLetter = true;
+        }
+    }
+    return foundLetter;
 }
 
-/*
- * @param: The word to look up the definition for
- * @return: The definition of the given word
- * @post: Look up and return the definition of the given word.
- */
-string getDefinition(string word) {
-    // not implemented, return placeholder value
-    return "unknown";
-}
-
+string getRandomWord() {
+    srand((unsigned) time(NULL));
+    int index = rand() % g_word_count;
+    return g_words[index];
+} 
 
 // game-loop for Hangman
 void gameLoop() {
@@ -398,5 +403,4 @@ void gameLoop() {
         }
     }
 }
-
 
